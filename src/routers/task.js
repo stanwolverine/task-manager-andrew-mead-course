@@ -23,29 +23,49 @@ router
 			res.status(400).send(error);
 		}
 	})
+	// GET /tasks?completed=true
+	// GET /tasks?limit=10&skip=20
+	// GET /tasks?sortBy=createdAt:desc
 	.get(auth, async (req, res) => {
 		try {
-			// 1st Option
-			const tasks = await TaskModel.find({ owner: req.user._id });
+			const { completed, limit, skip, sortBy } = req.query;
+
+			const match = {};
+			const sort = {};
+
+			if (completed) {
+				match.completed = completed === 'true';
+			}
+
+			if (sortBy) {
+				const [sortByField, sortByOrder] = sortBy.split(':');
+				sort[sortByField] = sortByOrder === 'desc' ? -1 : 1;
+			}
+
+			// // 1st Option
+			// const tasks = await TaskModel.find({
+			// 	...match,
+			// 	owner: req.user._id,
+			// 	options: {
+			// 		limit: parseInt(limit),
+			// 		skip: parseInt(skip),
+			// 		sort,
+			// 	},
+			// });
 
 			// 2nd Option
-			// await req.user.populate('tasks').execPopulate();
-			// const tasks = req.user.tasks;
-
-			// // Valid
-			// const tasks = await TaskModel.find({}).populate('owner').exec();
-			// // Not valid, throws error.
-			// const tasks = await TaskModel.find({})
-			// 	.populate('owner')
-			// 	.execPopulate();
-
-			// // Not valid, throws error.
-			// // As populate Method Is NOT AVAILABLE ON ARRAY. Its available on Document or Model.
-			// await tasks.populate('owner').execPopulate();
-			// // Valid
-			// await tasks[0].populate('owner').execPopulate();
-			// // Valid
-			// await tasks[1].populate('owner').execPopulate();
+			await req.user
+				.populate({
+					path: 'tasks',
+					match,
+					options: {
+						limit: parseInt(limit),
+						skip: parseInt(skip),
+						sort,
+					},
+				})
+				.execPopulate();
+			const tasks = req.user.tasks;
 
 			res.send(tasks);
 		} catch (error) {

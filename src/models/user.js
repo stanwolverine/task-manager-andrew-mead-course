@@ -5,53 +5,56 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const TaskSchema = require('./task');
 
-const UserSchema = new Schema({
-	name: {
-		type: String,
-		required: true,
-		trim: true,
-	},
-	age: {
-		type: Number,
-		default: 0,
-		validate(value) {
-			if (value < 0) {
-				throw new Error('Age must be a positive number');
-			}
+const UserSchema = new Schema(
+	{
+		name: {
+			type: String,
+			required: true,
+			trim: true,
 		},
-	},
-	email: {
-		type: String,
-		unique: true,
-		trim: true,
-		lowercase: true,
-		required: true,
-		validate(value) {
-			if (!validator.isEmail(value)) {
-				throw new Error('Email is invalid');
-			}
-		},
-	},
-	password: {
-		type: String,
-		required: true,
-		minLength: 7,
-		trim: true,
-		validate(value) {
-			if (value.toLowerCase().includes('password')) {
-				throw new Error("Password must not contain 'password'");
-			}
-		},
-	},
-	tokens: [
-		{
-			token: {
-				type: String,
-				required: true,
+		age: {
+			type: Number,
+			default: 0,
+			validate(value) {
+				if (value < 0) {
+					throw new Error('Age must be a positive number');
+				}
 			},
 		},
-	],
-});
+		email: {
+			type: String,
+			unique: true,
+			trim: true,
+			lowercase: true,
+			required: true,
+			validate(value) {
+				if (!validator.isEmail(value)) {
+					throw new Error('Email is invalid');
+				}
+			},
+		},
+		password: {
+			type: String,
+			required: true,
+			minLength: 7,
+			trim: true,
+			validate(value) {
+				if (value.toLowerCase().includes('password')) {
+					throw new Error("Password must not contain 'password'");
+				}
+			},
+		},
+		tokens: [
+			{
+				token: {
+					type: String,
+					required: true,
+				},
+			},
+		],
+	},
+	{ timestamps: true },
+);
 
 /**
  * These settings tell schema to include virtual properties whenever we invoke toObject or toJSON on Document.
