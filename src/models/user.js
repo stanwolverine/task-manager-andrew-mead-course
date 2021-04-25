@@ -7,6 +7,9 @@ const TaskSchema = require('./task');
 
 const UserSchema = new Schema(
 	{
+		avatar: {
+			type: Buffer,
+		},
 		name: {
 			type: String,
 			required: true,
@@ -140,6 +143,7 @@ UserSchema.method('toJSON', function () {
 
 	delete userObject.password;
 	delete userObject.tokens;
+	delete userObject.avatar;
 
 	return userObject;
 });

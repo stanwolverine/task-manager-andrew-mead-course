@@ -1,7 +1,9 @@
+const sharp = require('sharp');
 const express = require('express');
 
 const auth = require('../middlewares/auth');
 const UserModel = require('../models/user');
+const avatarImageUpload = require('../middlewares/fileUpload');
 
 const router = new express.Router();
 
@@ -60,6 +62,47 @@ router
 			const user = await req.user.remove();
 
 			res.send(user);
+		} catch (error) {
+			res.status(500).send();
+		}
+	});
+
+router
+	.route('/me/avatar')
+	.get(auth, async (req, res) => {
+		if (!req.user.avatar) {
+			return res.status(404).send();
+		}
+		res.set('Content-Type', 'image/png');
+		res.send(req.user.avatar);
+	})
+	.post(
+		auth,
+		avatarImageUpload,
+		async (req, res) => {
+			try {
+				const buffer = await sharp(req.file.buffer)
+					.resize({ width: 250, height: 250 })
+					.png()
+					.toBuffer();
+
+				req.user.avatar = buffer;
+
+				await req.user.save();
+
+				res.send();
+			} catch (error) {
+				res.status(500).send();
+			}
+		},
+		(error, req, res, next) =>
+			res.status(400).send({ error: error.message }),
+	)
+	.delete(auth, async (req, res) => {
+		try {
+			req.user.avatar = undefined;
+			await req.user.save();
+			res.send();
 		} catch (error) {
 			res.status(500).send();
 		}
