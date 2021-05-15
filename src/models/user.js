@@ -79,8 +79,7 @@ UserSchema.virtual('tasks', {
 // });
 
 UserSchema.pre('validate', function () {
-	console.log('validate middleware');
-
+	// console.log('validate middleware');
 	// new Promise((resolve, reject) => {
 	// 	setTimeout(() => resolve(), 10000);
 	// }).then(() => {
@@ -89,7 +88,7 @@ UserSchema.pre('validate', function () {
 });
 
 UserSchema.pre('save', async function () {
-	console.log('save middleware');
+	// console.log('save middleware');
 	if (this.isModified('password')) {
 		const hashedPassword = await bcrypt.hash(this.password, 8);
 		this.password = hashedPassword;

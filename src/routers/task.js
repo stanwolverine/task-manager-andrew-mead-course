@@ -69,7 +69,6 @@ router
 
 			res.send(tasks);
 		} catch (error) {
-			console.log(error);
 			res.status(500).send();
 		}
 	});

@@ -9,8 +9,6 @@ const { sendWelcomeEmail, sendGoodbyeEmail } = require('../emails/account');
 const router = new express.Router();
 
 router.route('/').post(async (req, res) => {
-	console.log(req.body);
-
 	const { name, age, email, password } = req.body;
 
 	const user = new UserModel({ name, age, email, password });
@@ -121,7 +119,6 @@ router.route('/tasks').get(auth, async (req, res) => {
 
 		res.send({ tasks: user.tasks });
 	} catch (error) {
-		console.log(error);
 		res.status(500).send(error);
 	}
 });
