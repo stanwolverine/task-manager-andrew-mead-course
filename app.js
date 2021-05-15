@@ -23,6 +23,6 @@ app.use('/users', UserRouter);
 
 app.use('/tasks', TaskRouter);
 
-const port = process.env.PORT || 8081;
+const port = process.env.PORT;
 
 app.listen(port, () => console.info('Server started on port ', port));

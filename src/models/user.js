@@ -123,7 +123,7 @@ UserSchema.method('generateAuthToken', async function () {
 
 	const token = jwt.sign(
 		{ _id: user._id.toString() },
-		process.env.SECRET || 'thisismysecret',
+		process.env.JWT_SECRET,
 		{
 			expiresIn: '3d',
 		},

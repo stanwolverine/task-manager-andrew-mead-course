@@ -4,6 +4,7 @@ const express = require('express');
 const auth = require('../middlewares/auth');
 const UserModel = require('../models/user');
 const avatarImageUpload = require('../middlewares/fileUpload');
+const { sendWelcomeEmail, sendGoodbyeEmail } = require('../emails/account');
 
 const router = new express.Router();
 
@@ -18,6 +19,8 @@ router.route('/').post(async (req, res) => {
 		const newUser = await user.save();
 
 		const token = await user.generateAuthToken();
+
+		sendWelcomeEmail(user);
 
 		res.status(201).send({ user: newUser, token });
 	} catch (error) {
@@ -60,6 +63,8 @@ router
 	.delete(auth, async (req, res) => {
 		try {
 			const user = await req.user.remove();
+
+			sendGoodbyeEmail(user);
 
 			res.send(user);
 		} catch (error) {
